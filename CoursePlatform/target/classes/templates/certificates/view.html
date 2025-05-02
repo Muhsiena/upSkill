@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{shared/layout :: layout(~{::title}, ~{::div})}">
+<head>
+    <title>Certificate - Course Platform</title>
+</head>
+<body>
+    <div>
+        <div class="certificate-container mx-auto p-5 mb-4 border border-3 border-primary rounded-3 shadow">
+            <div class="text-center">
+                <h2 class="mb-4">Certificate of Completion</h2>
+                
+                <p class="mb-2">This is to certify that</p>
+                <h3 class="mb-3" th:text="${certificate.user.name}">Student Name</h3>
+                
+                <p class="mb-2">has successfully completed the course</p>
+                <h3 class="mb-4" th:text="${certificate.course.title}">Course Title</h3>
+                
+                <p class="mb-0">Issued on <span th:text="${#temporals.format(certificate.issuedDate, 'MMMM dd, yyyy')}">April 30, 2025</span></p>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <a th:href="@{/certificates/{id}/download(id=${certificate.certificateId})}" class="btn btn-primary">
+                Download Certificate (PDF)
+            </a>
+            <a th:href="@{/courses}" class="btn btn-outline-secondary ms-2">Back to Courses</a>
+        </div>
+    </div>
+</body>
+</html>

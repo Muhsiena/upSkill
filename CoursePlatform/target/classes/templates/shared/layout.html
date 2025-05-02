@@ -1,0 +1,30 @@
+<!-- src/main/resources/templates/shared/layout.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Course Platform</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <header class="header">
+        <nav>
+            <a th:href="@{/}" class="logo">Course Platform</a>
+            <div class="nav-links">
+                <a th:href="@{/courses}">Courses</a>
+                <a th:href="@{/login}">Login</a>
+                <a th:href="@{/register}">Register</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- This is the fragment you will use in your pages -->
+    <main th:fragment="content">
+        <!-- Default content, will be replaced -->
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Course Platform. All rights reserved.</p>
+    </footer>
+</body>
+</html>

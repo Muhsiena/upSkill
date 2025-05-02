@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile - Course Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --muted: #64748b;
+            --white: #fff;
+        }
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: var(--white);
+            padding: 1.2rem 2.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2.2rem;
+        }
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.08rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        .edit-container {
+            max-width: 600px;
+            margin: 3rem auto 2rem auto;
+            padding: 2.5rem 2rem 2rem 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 16px -2px rgba(0,0,0,0.12);
+        }
+        .edit-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .profile-icon-lg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+        }
+        .edit-header h2 {
+            margin-bottom: 0.25rem;
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        form {
+            margin-top: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 0.95rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.65rem;
+            font-size: 1.03rem;
+            transition: border-color 0.3s;
+            background: #f8fafc;
+        }
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 2px #2563eb22;
+        }
+        .btn-save {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 0.65rem;
+            font-size: 1.11rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 16px 0 rgba(37,99,235,0.07);
+            transition: background 0.2s, box-shadow 0.2s;
+            margin-top: 0.3rem;
+            letter-spacing: 0.5px;
+        }
+        .btn-save:hover, .btn-save:focus {
+            background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
+            box-shadow: 0 8px 24px 0 rgba(37,99,235,0.13);
+        }
+        .footer {
+            background: var(--white);
+            padding: 1.2rem 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 1.01rem;
+            letter-spacing: 0.2px;
+            margin-top: auto;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.03);
+        }
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem 1.2rem;
+            }
+            .edit-container {
+                padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+            }
+            .edit-header h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a th:href="@{/}" class="logo">Course Platform</a>
+        <div class="nav-links">
+            <a th:href="@{/courses}">Courses</a>
+            <a th:href="@{/profile}">Profile</a>
+            <a th:href="@{/logout}" sec:authorize="isAuthenticated()">Logout</a>
+            <a th:href="@{/login}" sec:authorize="!isAuthenticated()">Login</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="edit-container">
+            <div class="edit-header">
+                <div class="profile-icon-lg">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2>Edit Profile</h2>
+            </div>
+            <form th:action="@{/profile/update}" method="post" th:object="${user}">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" th:field="*{name}" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" th:field="*{email}" required readonly>
+                </div>
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Course Platform. All rights reserved.</p>
+    </footer>
+</body>
+</html>

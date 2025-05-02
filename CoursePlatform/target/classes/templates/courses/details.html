@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="${course.title}"></title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --muted: #64748b;
+        }
+
+        body {
+            background: #f1f5f9;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .course-details {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+
+        h1 {
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .course-meta {
+            margin-bottom: 2rem;
+        }
+
+        .course-meta p {
+            color: var(--muted);
+            line-height: 1.6;
+            margin: 0.5rem 0;
+        }
+
+        .enrollment-section {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 2rem;
+        }
+
+        .btn-enroll, .btn-complete, .btn-download {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-enroll:hover, .btn-complete:hover, .btn-download:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-complete[disabled] {
+            background: #a3a3a3;
+            cursor: not-allowed;
+        }
+
+        .enrollment-status {
+            margin-top: 1.5rem;
+        }
+
+        .status-completed {
+            color: #16a34a;
+            font-weight: 500;
+        }
+
+        .status-in-progress {
+            color: #ca8a04;
+            font-weight: 500;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .footer {
+            background: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 3rem;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav>
+            <a th:href="@{/}" class="logo">CoursePlatform</a>
+        </nav>
+        <div class="nav-links">
+            <a th:href="@{/courses}">Courses</a>
+            <a th:href="@{/login}" sec:authorize="!isAuthenticated()">Login</a>
+            <div sec:authorize="isAuthenticated()" class="profile-icon">
+                <a th:href="@{/profile}"><i class="fas fa-user"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="course-details">
+            <h1 th:text="${course.title}"></h1>
+            <div class="course-meta">
+                <p class="description" th:text="${course.description}"></p>
+                <p><strong>Duration:</strong> <span th:text="${course.duration}"></span></p>
+            </div>
+
+            <div class="enrollment-section">
+                <div th:if="${enrollment == null}">
+                    <form th:action="@{/enroll/{id}(id=${course.courseId})}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn-enroll">
+                            <i class="fas fa-bookmark"></i> Enroll in Course
+                        </button>
+                    </form>
+                </div>
+
+                <div th:if="${enrollment != null}" class="enrollment-status">
+                    <h3>Your Enrollment Status:</h3>
+                    <div th:classappend="${enrollment.completionStatus.name() == 'Completed' ? 'status-completed' : 'status-in-progress'}">
+                        <span th:text="${enrollment.completionStatus}"></span>
+                    </div>
+                    <div class="btn-group">
+                        <!-- Mark as Completed: Only updates status -->
+                        <form th:action="@{/complete/{enrollmentId}(enrollmentId=${enrollment.enrollmentId})}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn-complete"
+                                th:disabled="${enrollment.completionStatus.name() == 'Completed'}">
+                                <i class="fas fa-check-circle"></i> Mark as Completed
+                            </button>
+                        </form>
+                        <!-- Download Certificate: Only enabled when completed -->
+                        <form th:action="@{/certificates/{id}/download(id=${enrollment.enrollmentId})}" method="get">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn-download"
+                                th:disabled="${enrollment.completionStatus.name() != 'Completed'}">
+                                <i class="fas fa-download"></i> Download Certificate
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Course Platform. All rights reserved.</p>
+    </footer>
+</body>
+</html>
