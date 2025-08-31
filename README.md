@@ -68,16 +68,6 @@ Track course progress on the dashboard
 
 Download your certificate after course completion
 
-## Screenshots  
-
-### Home Page  
-![Home Page](screenshots/home.png)  
-
-### Login Page  
-![Login Page](screenshots/login.png)  
-
-### Dashboard  
-![Dashboard](screenshots/dashboard.png)  
 
 
 
